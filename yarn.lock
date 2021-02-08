@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@artsy/cli@^0.4.0-2":
+"@artsy/cli@^0.4.0":
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/@artsy/cli/-/cli-0.4.0.tgz#0bdab96fc6e282d1fb441e7e109454effa1767d6"
   integrity sha512-UlbOp/daJT/pH87nLHaOwp1kUvD3qZX256MqYZV+AQ3ujajBcBwKPTxfbLsVVki/FUbedahlTb7O8RBVs64ROA==
