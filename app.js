@@ -29,6 +29,24 @@ app.message(/^<@U01LVDNCZQF>\s(hi|hello|hey).*/i, async ({ context, say }) => {
   await say(`${greeting}, how are you?`);
 });
 
+if (process.env.DEBUG) {
+  app.use(args => {
+    const copiedArgs = JSON.parse(JSON.stringify(args));
+    copiedArgs.context.botToken = 'xoxb-***';
+    if (copiedArgs.context.userToken) {
+      copiedArgs.context.userToken = 'xoxp-***';
+    }
+    copiedArgs.client = {};
+    copiedArgs.logger = {};
+    args.logger.info(
+      "Dumping request data for debugging...\n\n" +
+      JSON.stringify(copiedArgs, null, 2) +
+      "\n"
+    );
+    args.next();
+  });
+}
+
 (async () => {
   await app.start(process.env.PORT || 3000);
 
