@@ -26,6 +26,11 @@ only_release: &only_release
 workflows:
   build-deploy:
     jobs:
+      - horizon/block:
+          <<: *only_release
+          context: horizon
+          project_id: 258
+
       - hokusai/test:
           <<: *not_staging_or_release
 
@@ -43,3 +48,5 @@ workflows:
 
       - hokusai/deploy-production:
           <<: *only_release
+          requires:
+            - horizon/block
