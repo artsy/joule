@@ -44,11 +44,26 @@ async function processGreeting({ context, say }) {
   await say(`${greeting}, how are you?`)
 }
 
+async function processRFCsCommand({ say }) {
+  runCLI("scheduled:rfcs", async (error, stdout) => {
+    if (error) {
+      await say("```\n" + error.toString() + "\n```")
+    } else {
+      json = JSON.parse(stdout)
+      await say(json)
+
+    }
+  })
+}
+
 app.message(onlyDirectMessages, /^cli (?<args>\S.*)$/, processCLICommand)
 app.message(directMention(), /^<@U\S+> cli (?<args>\S.*)$/, processCLICommand)
 
 app.message(onlyDirectMessages, /^(?<greeting>hi|hello|hey).*/i, processGreeting)
 app.message(directMention(), /^<@U\S+> (?<greeting>hi|hello|hey).*/i, processGreeting)
+
+app.message(onlyDirectMessages, /^rfcs$/i, processRFCsCommand)
+app.message(directMention(), /^<@U\S+> rfcs$/i, processRFCsCommand)
 
 if (process.env.DEBUG) {
   app.use(args => {
