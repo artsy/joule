@@ -22,7 +22,7 @@ async function runCLI(args, callback) {
   return execFile("yarn", commandArgs, callback)
 }
 
-async function processCLICommand({ context, say }) {
+async function processCLICommand({ message, context, say }) {
   const args = context.matches.groups.args
 
   runCLI(args, async (error, stdout) => {
@@ -34,24 +34,24 @@ async function processCLICommand({ context, say }) {
       result = stdout
     }
 
-    await say("```\n" + result.trim() + "\n```")
+    await say({ text: "```\n" + result.trim() + "\n```", thread_ts: message.thread_ts })
   })
 }
 
-async function processGreeting({ context, say }) {
+async function processGreeting({ context, message, say }) {
   const greeting = context.matches.groups.greeting
 
-  await say(`${greeting}, how are you?`)
+  await say({ text: `${greeting}, how are you?`, thread_ts: message.thread_ts })
 }
 
-async function processRFCsCommand({ say }) {
+async function processRFCsCommand({ message, say }) {
   runCLI("scheduled:rfcs", async (error, stdout) => {
     if (error) {
-      await say("```\n" + error.toString() + "\n```")
+      await say({ text: "```\n" + error.toString() + "\n```", thread_ts: message.thread_ts })
     } else {
       json = JSON.parse(stdout)
+      json.thread_ts = message.thread_ts
       await say(json)
-
     }
   })
 }
