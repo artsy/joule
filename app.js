@@ -9,30 +9,33 @@ const app = new App({
   signingSecret: process.env.SLACK_SIGNING_SECRET
 })
 
-async function onlyDirectMessages({ event, message, next }) {
+async function onlyDirectMessages({ event, next }) {
   if (event.channel_type === "im") {
     await next()
   }
 }
 
-async function runCLI(args, say) {
+async function runCLI(args, callback) {
   const parsedArgs = parse(args)
   const commandArgs = ["run", "--silent", "artsy"].concat(parsedArgs)
 
-  execFile("yarn", commandArgs, async (error, stdout) => {
-    if (error) {
-      return error.toString()
-    } else {
-      return stdout
-    }
-  })
+  return execFile("yarn", commandArgs, callback)
 }
 
 async function processCLICommand({ context, say }) {
   const args = context.matches.groups.args
-  const result = await runCLI(args)
-  
-  await say("```\n" + result.trim() + "\n```")
+
+  runCLI(args, async (error, stdout) => {
+    let result
+
+    if (error) {
+      result = error.toString()
+    } else {
+      result = stdout
+    }
+
+    await say("```\n" + result.trim() + "\n```")
+  })
 }
 
 async function processGreeting({ context, say }) {
@@ -41,11 +44,26 @@ async function processGreeting({ context, say }) {
   await say(`${greeting}, how are you?`)
 }
 
+async function processRFCsCommand({ say }) {
+  runCLI("scheduled:rfcs", async (error, stdout) => {
+    if (error) {
+      await say("```\n" + error.toString() + "\n```")
+    } else {
+      json = JSON.parse(stdout)
+      await say(json)
+
+    }
+  })
+}
+
 app.message(onlyDirectMessages, /^cli (?<args>\S.*)$/, processCLICommand)
 app.message(directMention(), /^<@U\S+> cli (?<args>\S.*)$/, processCLICommand)
 
 app.message(onlyDirectMessages, /^(?<greeting>hi|hello|hey).*/i, processGreeting)
 app.message(directMention(), /^<@U\S+> (?<greeting>hi|hello|hey).*/i, processGreeting)
+
+app.message(onlyDirectMessages, /^rfcs$/i, processRFCsCommand)
+app.message(directMention(), /^<@U\S+> rfcs$/i, processRFCsCommand)
 
 if (process.env.DEBUG) {
   app.use(args => {
