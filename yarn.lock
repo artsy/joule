@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@artsy/cli@^0.15.0":
-  version "0.15.0"
-  resolved "https://registry.yarnpkg.com/@artsy/cli/-/cli-0.15.0.tgz#da21f0c167b7d7e3ce64903f678ddc7948b57138"
-  integrity sha512-Bh5c48FIWzyrnnwsmJ/yX03GT14Q2JYU7EpvyiUeDWn3OWIFNCPRtoVVWGKnCu5bbRL0bvIkdl4hG6RjE3t4MA==
+"@artsy/cli@^0.16.0":
+  version "0.16.0"
+  resolved "https://registry.yarnpkg.com/@artsy/cli/-/cli-0.16.0.tgz#8f9990c249c1f615d37f106aee3e0868eaaed0eb"
+  integrity sha512-E280vJSPPclb+taUVN2/uNXHPVP/Cyf7otAkBJy3qjfNginCW2kq+MooX71tqFzG/2b1/0chh9Nxzmw/ny5PLw==
   dependencies:
     "@oclif/command" "^1"
     "@oclif/config" "^1"
