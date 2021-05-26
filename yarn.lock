@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@artsy/cli@^0.18.0":
-  version "0.18.0"
-  resolved "https://registry.yarnpkg.com/@artsy/cli/-/cli-0.18.0.tgz#b15f0d517e3448fe6dfd58285fb65e45db083995"
-  integrity sha512-7Z0q8iKuil+El6TFYRGI+xsFfqtrJKr1sO9IDR30rpfni6I8i6oocD8lYErS4JY16dp9a+FkyWocnVVrDqVlhQ==
+"@artsy/cli@^0.20.0":
+  version "0.20.0"
+  resolved "https://registry.yarnpkg.com/@artsy/cli/-/cli-0.20.0.tgz#0807c3f0767afb7c8a50724e451f3c2fd8e30b11"
+  integrity sha512-Z4Ogj552cnRlwsHecvBj+IvYixYVkQqLnE/pWue10Ol2Q3dhEPqc4yA7QrXTVOWxA3WncZdAagFt7kmkCoSi7A==
   dependencies:
     "@oclif/command" "^1"
     "@oclif/config" "^1"
@@ -19,7 +19,9 @@
     apollo-client "^2.6.10"
     apollo-link-http "^1.5.17"
     cli-ux "^5.3.1"
+    colon-template "^1.0.3"
     cross-fetch "^3.0.6"
+    dashify "^2.0.0"
     dotenv "^8.0.0"
     graphql "^15.5.0"
     graphql-tag "^2.11.0"
@@ -29,6 +31,7 @@
     querystring "^0.2.0"
     rss-parser "^3.11.0"
     tslib "^2"
+    uri-scheme "^1.0.76"
 
 "@nodelib/fs.scandir@2.1.4":
   version "2.1.4"
@@ -756,6 +759,14 @@ cli-ux@^5.3.1:
     supports-hyperlinks "^2.1.0"
     tslib "^2.0.0"
 
+colon-template@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/colon-template/-/colon-template-1.0.3.tgz#a4dc563aedc0e51a08902fea47c1eb23e6fcf4fd"
+  integrity sha1-pNxWOu3A5RoIkC/qR8HrI+b89P0=
+  dependencies:
+    escape-regexp "0.0.1"
+    propget "1.0.0"
+
 color-convert@^1.9.0:
   version "1.9.3"
   resolved "https://registry.yarnpkg.com/color-convert/-/color-convert-1.9.3.tgz#bb71850690e1f136567de629d2d5471deda4c1e8"
@@ -831,6 +842,11 @@ cross-spawn@^6.0.5:
     semver "^5.5.0"
     shebang-command "^1.2.0"
     which "^1.2.9"
+
+dashify@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/dashify/-/dashify-2.0.0.tgz#fff270ca2868ca427fee571de35691d6e437a648"
+  integrity sha512-hpA5C/YrPjucXypHPPc0oJ1l9Hf6wWbiOL7Ik42cxnsUOhWiCB/fylKbKqqJalW9FgkNQCw16YO8uW9Hs0Iy1A==
 
 debug@2.6.9:
   version "2.6.9"
@@ -976,6 +992,11 @@ escape-html@~1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/escape-html/-/escape-html-1.0.3.tgz#0258eae4d3d0c0974de1c169188ef0051d1d1988"
   integrity sha1-Aljq5NPQwJdN4cFpGI7wBR0dGYg=
+
+escape-regexp@0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/escape-regexp/-/escape-regexp-0.0.1.tgz#f44bda12d45bbdf9cb7f862ee7e4827b3dd32254"
+  integrity sha1-9EvaEtRbvfnLf4Yu5+SCez3TIlQ=
 
 escape-string-regexp@4.0.0:
   version "4.0.0"
@@ -1787,6 +1808,11 @@ promise.allsettled@^1.0.2:
     get-intrinsic "^1.0.2"
     iterate-value "^1.0.2"
 
+propget@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/propget/-/propget-1.0.0.tgz#d003512445efb813eabc29989cd5ecf715679f42"
+  integrity sha1-0ANRJEXvuBPqvCmYnNXs9xVnn0I=
+
 proxy-addr@~2.0.5:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/proxy-addr/-/proxy-addr-2.0.6.tgz#fdc2336505447d3f2f2c638ed272caf614bbb2bf"
@@ -2112,6 +2138,11 @@ unpipe@1.0.0, unpipe@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/unpipe/-/unpipe-1.0.0.tgz#b2bf4ee8514aae6165b4817829d21b2ef49904ec"
   integrity sha1-sr9O6FFKrmFltIF4KdIbLvSZBOw=
+
+uri-scheme@^1.0.76:
+  version "1.0.80"
+  resolved "https://registry.yarnpkg.com/uri-scheme/-/uri-scheme-1.0.80.tgz#b503b133b92c6cc69898c49a81ff5fed691c9910"
+  integrity sha512-uJYiXpZg91yyXkGZ8kxVwGc1381lBKSiMmcLny8OK/jmDC/K2Ubh/9XN/ykBFoeH8QR8mYlH4EvccuVYAc9Kkw==
 
 utils-merge@1.0.1:
   version "1.0.1"
