@@ -202,10 +202,10 @@
     "@octokit/openapi-types" "^4.0.3"
     "@types/node" ">= 8"
 
-"@slack/bolt@^3.4.0":
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/@slack/bolt/-/bolt-3.4.0.tgz#466cb6b8caff632303f992f89ef2568aa4487d8b"
-  integrity sha512-mIcJO63zgGdJUINB/VWAfgGn0IUSaZe5At6v8kZ7TjLJpAxo89A89cJWvftCXJ4kqIZkmI5aW+HGLp/miBoYCA==
+"@slack/bolt@^3.4.1":
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/@slack/bolt/-/bolt-3.4.1.tgz#8827928bae6a61f8fc36d450343ade62fb6cbc6b"
+  integrity sha512-GiY0JJvtJsbOlpLHiP0yvJU5sHBcqwhac99+XJTDFcXY/vc19P/DcZ90w6CUxhRlYphraVBOQRDEcWpbNr8LLw==
   dependencies:
     "@slack/logger" "^3.0.0"
     "@slack/oauth" "^2.0.0"
