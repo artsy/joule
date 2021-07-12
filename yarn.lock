@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@artsy/cli@^0.20.1":
-  version "0.20.1"
-  resolved "https://registry.yarnpkg.com/@artsy/cli/-/cli-0.20.1.tgz#01d3851dfb234e2b3fc4e0fd0196cb6346696299"
-  integrity sha512-gK7hsbl7mPA0pdua540rur8IrF0U8zeCVBF9CyZn8BgIGaU/TMoYQGoyZ2S+DlcvZnvXfh4cJ6WZoEAj1f9HRw==
+"@artsy/cli@^0.22.0":
+  version "0.22.0"
+  resolved "https://registry.yarnpkg.com/@artsy/cli/-/cli-0.22.0.tgz#ff124ff3c646d695b41f5c9bd8ac397e5ea4cc9a"
+  integrity sha512-SigSBKIJJ6UMYX637t11IFbOhjSvWhKW4n2PtcodVQnmoMoZFmOUenEBk3leZRI14p8WfShD/D93/PZWW5zOyA==
   dependencies:
     "@oclif/command" "^1"
     "@oclif/config" "^1"
@@ -22,7 +22,7 @@
     colon-template "^1.0.3"
     cross-fetch "^3.0.6"
     dashify "^2.0.0"
-    dotenv "^8.0.0"
+    dotenv "^10.0.0"
     graphql "^15.5.0"
     graphql-tag "^2.11.0"
     lodash.chunk "^4.2.0"
@@ -901,11 +901,6 @@ dotenv@^10.0.0:
   version "10.0.0"
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-10.0.0.tgz#3d4227b8fb95f81096cdd2b66653fb2c7085ba81"
   integrity sha512-rlBi9d8jpv9Sf1klPjNfFAuWDjKLwTIJJ/VxtoTwIR6hnZxcEOQCZg2oIL3MWBYw5GpUDKOEnND7LXTbIpQ03Q==
-
-dotenv@^8.0.0:
-  version "8.6.0"
-  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.6.0.tgz#061af664d19f7f4d8fc6e4ff9b584ce237adcb8b"
-  integrity sha512-IrPdXQsk2BbzvCBGBOTmmSH5SodmqZNt4ERAZDmW4CT+tL8VtvinqywuANaFu4bOMWki16nqf0e4oC0QIaDr/g==
 
 ecdsa-sig-formatter@1.0.11:
   version "1.0.11"
