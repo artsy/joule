@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@artsy/cli@^0.23.0":
-  version "0.23.0"
-  resolved "https://registry.yarnpkg.com/@artsy/cli/-/cli-0.23.0.tgz#de107d804cea0de9dddef8c31a787575cda8d24d"
-  integrity sha512-Ay++VaQ79uD8jLj7Uv2fbwKtAG9O2Ac9JLCRDjsFHlGeUWZpZAUryqwhQzGSSvX70AGbQlHW2kxcmJ0uW/UFIw==
+"@artsy/cli@^0.26.0":
+  version "0.26.0"
+  resolved "https://registry.yarnpkg.com/@artsy/cli/-/cli-0.26.0.tgz#99c2694dc986d0c7548b4e9876bf39d9f6747652"
+  integrity sha512-RC6hf4JyStcLiDsa/tVdjQMM/PN2FfE8f+kd6KYyc4cmrZmpISu5Lt5nPA4I8ztSwx4R43x0og65Ntuq5yc9jA==
   dependencies:
     "@oclif/command" "^1"
     "@oclif/config" "^1"
@@ -30,6 +30,7 @@
     node-fetch "^2.6.0"
     querystring "^0.2.0"
     rss-parser "^3.11.0"
+    search-query-parser "^1.6.0"
     tslib "^2"
     turndown "^7.1.1"
     uri-scheme "^1.0.76"
@@ -1919,6 +1920,11 @@ sax@>=0.6.0:
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/sax/-/sax-1.2.4.tgz#2816234e2378bddc4e5354fab5caa895df7100d9"
   integrity sha512-NqVDv9TpANUjFm0N8uM5GxL36UgKi9/atZw+x7YFnQ8ckwFGKrl4xX4yWtrey3UJm5nP1kUbnYgLopqWNSRhWw==
+
+search-query-parser@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/search-query-parser/-/search-query-parser-1.6.0.tgz#d69ade33f3685cae25613a70189b7b18970b46f1"
+  integrity sha512-bhf+phLlKF38nuniwLcVHWPArHGdzenlPhPi955CR3vm1QQifXIuPHwAffhjapojdVVzmv4hgIJ6NOX1d/w+Uw==
 
 semver-compare@^1.0.0:
   version "1.0.0"
