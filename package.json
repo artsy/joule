@@ -10,7 +10,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@artsy/cli": "^1.4.0",
+    "@artsy/cli": "^1.7.0",
     "@slack/bolt": "^3.12.1",
     "dotenv": "^10.0.0",
     "shell-quote": "^1.8.0"
