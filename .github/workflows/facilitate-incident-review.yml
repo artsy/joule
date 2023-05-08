@@ -1,0 +1,36 @@
+name: Facilitate Incident Review
+
+on:
+  schedule:
+    - cron: '0 14 * * WED'
+
+jobs:
+  facilitate-incident-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Setup Node.JS
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Dependencies
+        run: npm install --global @artsy/cli
+
+      - name: Run CLI
+        id: cli
+        run: echo "PAYLOAD=$(artsy scheduled:facilitate-incident-review --facilitatorEmail=${{ secrets.EMAIL_OZ }} --useDatesVar)" >> $GITHUB_OUTPUT
+        env:
+          OPSGENIE_API_KEY: ${{ secrets.OPSGENIE_API_KEY }}
+          SLACK_WEB_API_TOKEN: ${{ secrets.SLACK_WEB_API_TOKEN }}
+          DATES: ${{ vars.DATES }}
+
+      - name: CLI payload > Slack
+        if: ${{ steps.cli.outputs.PAYLOAD != 'Off week' }}
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          custom_payload: ${{ steps.cli.outputs.PAYLOAD }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
