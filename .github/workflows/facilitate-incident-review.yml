@@ -20,7 +20,7 @@ jobs:
 
       - name: Run CLI
         id: cli
-        run: echo "PAYLOAD=$(artsy scheduled:facilitate-incident-review --facilitatorEmail=${{ secrets.EMAIL_OZ }} --useDatesVar)" >> $GITHUB_OUTPUT
+        run: echo "PAYLOAD=$(artsy scheduled:facilitate-incident-review --useDatesVar)" >> $GITHUB_OUTPUT
         env:
           OPSGENIE_API_KEY: ${{ secrets.OPSGENIE_API_KEY }}
           SLACK_WEB_API_TOKEN: ${{ secrets.SLACK_WEB_API_TOKEN }}
