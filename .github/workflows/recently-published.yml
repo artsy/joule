@@ -21,7 +21,7 @@ jobs:
 
       - name: Run CLI
         id: cli
-        run: echo "::set-output name=payload::$(artsy scheduled:recently-published)"
+        run: echo "PAYLOAD=$(artsy scheduled:recently-published)" >> "$GITHUB_OUTPUT"
         env:
           SLACK_WEB_API_TOKEN: ${{ secrets.SLACK_WEB_API_TOKEN }}
 
@@ -29,6 +29,6 @@ jobs:
         uses: 8398a7/action-slack@v3
         with:
           status: custom
-          custom_payload: ${{steps.cli.outputs.payload}}
+          custom_payload: ${{steps.cli.outputs.PAYLOAD}}
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
