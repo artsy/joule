@@ -20,7 +20,7 @@ jobs:
 
       - name: Run CLI
         id: cli
-        run: echo "PAYLOAD=$(artsy scheduled:rfcs)" >> $GITHUB_PAYLOAD
+        run: echo "::set-output name=payload::$(artsy scheduled:rfcs)"
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
@@ -28,6 +28,6 @@ jobs:
         uses: 8398a7/action-slack@v3
         with:
           status: custom
-          custom_payload: ${{steps.cli.outputs.PAYLOAD}}
+          custom_payload: ${{steps.cli.outputs.payload}}
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
