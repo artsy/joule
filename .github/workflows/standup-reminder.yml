@@ -1,6 +1,7 @@
 name: Standup Reminder
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 14 * * MON'
 
@@ -20,7 +21,7 @@ jobs:
 
       - name: Run CLI
         id: cli
-        run: echo "PAYLOAD=$(artsy scheduled:standup-reminder)" >> $GITHUB_PAYLOAD
+        run: echo "::set-output name=payload::$(artsy scheduled:standup-reminder)"
         env:
           OPSGENIE_API_KEY: ${{ secrets.OPSGENIE_API_KEY }}
           SLACK_WEB_API_TOKEN: ${{ secrets.SLACK_WEB_API_TOKEN }}
@@ -29,6 +30,6 @@ jobs:
         uses: 8398a7/action-slack@v3
         with:
           status: custom
-          custom_payload: ${{steps.cli.outputs.PAYLOAD}}
+          custom_payload: ${{steps.cli.outputs.payload}}
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
