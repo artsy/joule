@@ -21,7 +21,7 @@ jobs:
 
       - name: Run CLI
         id: cli
-        run: echo "PAYLOAD=$(artsy scheduled:rfcs)" >> $GITHUB_OUTPUT
+        run: echo "PAYLOAD=$(artsy scheduled:rfcs)" >> "$GITHUB_OUTPUT"
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
