@@ -1,6 +1,7 @@
 name: Facilitate Incident Review
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 14 * * WED'
 
