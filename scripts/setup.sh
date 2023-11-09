@@ -20,7 +20,7 @@ echo "Installing dependencies..."
 yarn install || (npm install --global yarn@latest && yarn install)
 
 echo 'Updating .env file (for shared configuration)...'
-aws s3 cp s3://artsy-citadel/dev/.env.joule .env || 'Unable to download shared configuration, ensure you have S3 access!'
+aws s3 cp s3://artsy-citadel/joule/.env ./ || 'Unable to download shared configuration, ensure you have S3 access!'
 
 echo 'Setup complete! To start the server, run:
   yarn start'
