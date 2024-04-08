@@ -54,3 +54,8 @@ node_modules/
 
 # macOS
 .DS_Store
+
+# python
+__pycache__/
+.pytest_cache/
+.python-version
