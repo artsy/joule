@@ -21,8 +21,8 @@ jobs:
           echo "::set-output name=should_run::$result"
 
   sapphire-on-call-retro:
-    needs: check_and_notify
-    if: needs.check_and_notify.outputs.should_run == 'true'
+    needs: check_if_retro_is_today
+    if: needs.check_if_retro_is_today.outputs.should_run == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
