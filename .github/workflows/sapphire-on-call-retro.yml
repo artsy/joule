@@ -6,7 +6,7 @@ on:
     - cron: "45 14 * * THU"
 
 jobs:
-  check_and_notify:
+  check_if_retro_is_today:
     runs-on: ubuntu-latest
     outputs:
       should_run: ${{ steps.check_run_condition.outputs.should_run }}
