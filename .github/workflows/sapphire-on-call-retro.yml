@@ -1,0 +1,51 @@
+name: Sapphire On Call Retro
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "45 14 * * THU"
+
+jobs:
+  check_and_notify:
+    runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ steps.check_run_condition.outputs.should_run }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Check if retro is today
+        id: check_run_condition
+        run: |
+          result=$(python3 sapphire/utils/is_retro_today.py)
+          echo "::set-output name=should_run::$result"
+
+  sapphire-on-call-retro:
+    needs: check_and_notify
+    if: needs.check_and_notify.outputs.should_run == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Setup Node.JS
+        uses: actions/setup-node@v2
+        with:
+          node-version: "12"
+
+      - name: Install Dependencies
+        run: npm install --global @artsy/cli
+
+      - name: Run CLI
+        id: cli
+        run: echo "PAYLOAD=$(artsy scheduled:sapphire-on-call-retro)" >> "$GITHUB_OUTPUT"
+        env:
+          OPSGENIE_API_KEY: ${{ secrets.OPSGENIE_API_KEY }}
+          SLACK_WEB_API_TOKEN: ${{ secrets.SLACK_WEB_API_TOKEN }}
+
+      - name: Standup Reminder > Slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          custom_payload: ${{steps.cli.outputs.PAYLOAD}}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SAPPHIRE_SLACK_WEBHOOK_URL }}

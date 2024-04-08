@@ -1,6 +1,8 @@
 # joule
 
-Helpful artsy engineering bot
+Helpful artsy engineering bot to send scheduled Slack messages.
+
+Commands are added to [artsy/cli](https://github.com/artsy/cli) then called and scheduled under `.github/workflows`.
 
 ## Setup
 
