@@ -3,7 +3,7 @@ name: Sapphire On Call Retro
 on:
   workflow_dispatch:
   schedule:
-    - cron: "45 14 * * THU"
+    - cron: "45 13 * * THU"
 
 jobs:
   check_if_retro_is_today:

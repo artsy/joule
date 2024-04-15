@@ -3,7 +3,7 @@ name: Sapphire On Call
 on:
   workflow_dispatch:
   schedule:
-    - cron: "45 14 * * MON"
+    - cron: "45 13 * * MON"
 
 jobs:
   sapphire-on-call:
