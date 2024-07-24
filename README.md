@@ -2,7 +2,7 @@
 
 Helpful artsy engineering bot to send scheduled Slack messages.
 
-Commands are added to [artsy/cli](https://github.com/artsy/cli) then called and scheduled under `.github/workflows`.
+Commands are added to [artsy/cli/src/commands/scheduled](https://github.com/artsy/cli/tree/main/src/commands/scheduled) then called and scheduled under [.github/workflows](.github/workflows).
 
 ## Setup
 
