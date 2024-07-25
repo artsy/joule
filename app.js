@@ -1,12 +1,29 @@
-const { App, directMention} = require('@slack/bolt')
+const { App, ExpressReceiver, directMention } = require('@slack/bolt')
 const { parse } = require('shell-quote')
 const { execFile } = require('child_process')
-
 require('dotenv').config()
+
+const ACTION_MARK_SOLVED = "solved";
+const SOLVED_EMOJI = "white_check_mark";
+const CHANNELS_TO_EXCLUDE = [
+  // 'C012K7XU4LE', // #bot-testing
+];
+const CHANNELS_FOR_BUGS_WORKFLOW_REMINDER = [
+  "C02E1D1G3B3", // #chr-test
+  "C03N12SR0RK", // #product-bugs-and-feedback
+];
+
+const receiver = new ExpressReceiver({
+  signingSecret: process.env.SLACK_SIGNING_SECRET,
+  endpoints: {
+    events: '/slack/events',
+    actions: '/slack/actions'
+  }
+});
 
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
-  signingSecret: process.env.SLACK_SIGNING_SECRET
+  receiver
 })
 
 async function onlyDirectMessages({ event, next }) {
@@ -56,6 +73,110 @@ async function processRFCsCommand({ message, say }) {
   })
 }
 
+async function addCheckmarkReaction({ client, channel, timestamp }) {
+  try {
+    await client.reactions.add({ name: SOLVED_EMOJI, channel, timestamp });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function hasCheckmarkReaction({ client, channel, timestamp }) {
+  try {
+    const response = await client.reactions.get({ channel, timestamp });
+    return response.message.reactions?.some((reaction) => reaction.name === SOLVED_EMOJI) || false;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+}
+
+async function processThreadMessagesForGratitude(client, event) {
+  if (event.user !== event.parent_user_id) return;
+  if (await hasCheckmarkReaction({ client, channel: event.channel, timestamp: event.thread_ts })) return;
+
+  const text = event.text.toLowerCase();
+  if (text === "solved") {
+    await addCheckmarkReaction({ client, channel: event.channel, timestamp: event.thread_ts });
+  } else if (/thank|^ty|solved/.test(text)) {
+    const reminderMessage = "Mark this thread as solved by clicking the button or replying `solved`.";
+
+    await client.chat.postEphemeral({
+      channel: event.channel,
+      user: event.user,
+      text: reminderMessage,
+      thread_ts: event.thread_ts,
+      blocks: [
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: reminderMessage,
+          },
+        },
+        {
+          type: "actions",
+          elements: [
+            {
+              type: "button",
+              text: {
+                type: "plain_text",
+                text: "✅  Mark as Solved",
+              },
+              style: "primary",
+              action_id: ACTION_MARK_SOLVED,
+            },
+          ],
+        },
+      ],
+    });
+  }
+}
+
+async function processTopMessagesForBugWorkflowReminder(client, event) {
+  if (!CHANNELS_FOR_BUGS_WORKFLOW_REMINDER.includes(event.channel)) return;
+
+  const issueWordsRegex = /(bug|issue|reproduce|complain|replicate)/i;
+  const ignoreWordsRegex = /feedback/i;
+  const reminderMessage = `Oops! 🐞\nIt seems you found a bug, <@${event.user}>. Please use the Product Bugs Report workflow. Thanks! 🙌`;
+
+  if (issueWordsRegex.test(event.text) && !ignoreWordsRegex.test(event.text)) {
+    try {
+      await client.chat.postEphemeral({
+        channel: event.channel,
+        user: event.user,
+        text: reminderMessage,
+        thread_ts: event.thread_ts,
+        blocks: [
+          {
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: reminderMessage,
+            },
+          },
+          {
+            type: "actions",
+            elements: [
+              {
+                type: "button",
+                text: {
+                  type: "plain_text",
+                  text: "▶️  Report Bug",
+                },
+                style: "primary",
+                url: "https://slack.com/shortcuts/Ft074LRBHCE6/8e9a1ef94c02a74bbb6e2aee43b22d87",
+              },
+            ],
+          },
+        ],
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+}
+
 app.message(onlyDirectMessages, /^cli (?<args>\S.*)$/, processCLICommand)
 app.message(directMention(), /^<@U\S+> cli (?<args>\S.*)$/, processCLICommand)
 
@@ -64,6 +185,37 @@ app.message(directMention(), /^<@U\S+> (?<greeting>hi|hello|hey).*/i, processGre
 
 app.message(onlyDirectMessages, /^rfcs$/i, processRFCsCommand)
 app.message(directMention(), /^<@U\S+> rfcs$/i, processRFCsCommand)
+
+app.message(async ({ client, message, event }) => {
+  if (CHANNELS_TO_EXCLUDE.includes(event.channel)) return;
+
+  if (message.thread_ts == null) {
+    await processTopMessagesForBugWorkflowReminder(client, event);
+  } else {
+    await processThreadMessagesForGratitude(client, event);
+  }
+});
+
+app.action(ACTION_MARK_SOLVED, async ({ action, ack, respond, client, body }) => {
+  await ack();
+  const { channel, container } = action;
+
+  try {
+    const channel = body.container.channel_id;
+    const ts = body.container.thread_ts || body.container.message_ts;
+
+    if (!channel) throw new Error("Channel is undefined");
+    if (!ts) throw new Error("Timestamp is undefined");
+    
+    await addCheckmarkReaction({ client, channel: body.channel.id, timestamp: ts });
+    await respond({ delete_original: true });
+
+  } catch (error) {
+    console.error("Error adding checkmark reaction:", error);
+  }
+
+  console.log("ACTION_MARK_SOLVED END ~")
+});
 
 if (process.env.DEBUG) {
   app.use(args => {
