@@ -206,15 +206,13 @@ app.action(ACTION_MARK_SOLVED, async ({ action, ack, respond, client, body }) =>
 
     if (!channel) throw new Error("Channel is undefined");
     if (!ts) throw new Error("Timestamp is undefined");
-    
+
     await addCheckmarkReaction({ client, channel: body.channel.id, timestamp: ts });
     await respond({ delete_original: true });
 
   } catch (error) {
     console.error("Error adding checkmark reaction:", error);
   }
-
-  console.log("ACTION_MARK_SOLVED END ~")
 });
 
 if (process.env.DEBUG) {
