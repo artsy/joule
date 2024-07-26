@@ -4,6 +4,7 @@ const { execFile } = require('child_process')
 require('dotenv').config()
 
 const ACTION_MARK_SOLVED = "solved";
+const ACTION_REPORT_BUG = "report_bug";
 const SOLVED_EMOJI = "white_check_mark";
 const CHANNELS_TO_EXCLUDE = [
   // 'C012K7XU4LE', // #bot-testing
@@ -166,6 +167,7 @@ async function processTopMessagesForBugWorkflowReminder(client, event) {
                 },
                 style: "primary",
                 url: "https://slack.com/shortcuts/Ft074LRBHCE6/8e9a1ef94c02a74bbb6e2aee43b22d87",
+                action_id: ACTION_REPORT_BUG
               },
             ],
           },
@@ -213,6 +215,11 @@ app.action(ACTION_MARK_SOLVED, async ({ action, ack, respond, client, body }) =>
   } catch (error) {
     console.error("Error adding checkmark reaction:", error);
   }
+});
+
+app.action(ACTION_REPORT_BUG, async ({ ack }) => {
+  await ack();
+  // URL action, no action needed. 
 });
 
 if (process.env.DEBUG) {
