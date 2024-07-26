@@ -139,7 +139,7 @@ async function processTopMessagesForBugWorkflowReminder(client, event) {
 
   const issueWordsRegex = /(bug|issue|reproduce|complain|replicate)/i;
   const ignoreWordsRegex = /feedback/i;
-  const reminderMessage = `Oops! 🐞\nIt seems you found a bug, <@${event.user}>. Please use the Product Bugs Report workflow. Thanks! 🙌`;
+  const reminderMessage = `Oops! 🐞\nIt seems you found a bug, <@${event.user}>. Please use the 'Report a Bug' workflow. Thanks! 🙌`;
 
   if (issueWordsRegex.test(event.text) && !ignoreWordsRegex.test(event.text)) {
     try {
