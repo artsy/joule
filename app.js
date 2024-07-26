@@ -137,7 +137,7 @@ async function processThreadMessagesForGratitude(client, event) {
 async function processTopMessagesForBugWorkflowReminder(client, event) {
   if (!CHANNELS_FOR_BUGS_WORKFLOW_REMINDER.includes(event.channel)) return;
 
-  const issueWordsRegex = /(bug|issue|reproduce|complain|replicate)/i;
+  const issueWordsRegex = /(bug|issue|error|reproduce|complain|replicate)/i;
   const ignoreWordsRegex = /feedback/i;
   const reminderMessage = `Oops! 🐞\nIt seems you found a bug, <@${event.user}>. Please use the 'Report a Bug' workflow. Thanks! 🙌`;
 
