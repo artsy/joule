@@ -10,8 +10,9 @@ const CHANNELS_TO_EXCLUDE = [
   // 'C012K7XU4LE', // #bot-testing
 ];
 const CHANNELS_FOR_BUGS_WORKFLOW_REMINDER = [
-  "C02E1D1G3B3", // #chr-test
-  "C03N12SR0RK", // #product-bugs-and-feedback
+  "C02E1D1G3B3", // #chr-test 
+  "C03N12SR0RK", // #product-questions
+  "C07PRTJSD6G", // #product-bugs
 ];
 
 const receiver = new ExpressReceiver({
