@@ -97,7 +97,7 @@ async function processThreadMessagesForGratitude(client, event) {
   if (await hasCheckmarkReaction({ client, channel: event.channel, timestamp: event.thread_ts })) return;
 
   const text = event.text.toLowerCase();
-  if (text === "solved" || text.endsWith(" has been updated to `done`.")) {
+  if (text === "solved" || text.endsWith(" has been updated to `done`.") || text.endsWith(" has been updated to `closed`.")) {
     await addCheckmarkReaction({ client, channel: event.channel, timestamp: event.thread_ts });
   } else if (/thank|^ty|solved/.test(text)) {
     const reminderMessage = "Mark this thread as solved by clicking the button or replying `solved`.";
