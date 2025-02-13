@@ -39,3 +39,8 @@ When adding a new workflow, add a new yml file under `.github/workflows/` contai
 
 GitHub disables workflows within a repository if there is no activity in the repository for 60 days.
 To avoid this happening to your workflow, place it within `wokrflow_files` in the `keepalive` workflow.
+You must also add the following step to your workflow:
+
+```yaml
+- uses: actions/checkout@v4
+```

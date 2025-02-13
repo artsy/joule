@@ -13,6 +13,5 @@ jobs:
       - uses: actions/checkout@v4
       - uses: gautamkrishnar/keepalive-workflow@v2
         with:
-          workflow_files: "facilitate-incident-review.yml"
-          # workflow_files: "facilitate-incident-review.yml, next-on-call.yml, open-rfcs.yml, recently-published.yml, sapphire-on-call-retro.yaml, sapphire-on-call.yml, security-bounty-rotation.yml, standup-reminder.yml"
+          workflow_files: "facilitate-incident-review.yml, next-on-call.yml, open-rfcs.yml, recently-published.yml, sapphire-on-call-retro.yaml, sapphire-on-call.yml, security-bounty-rotation.yml, standup-reminder.yml"
           time_elapsed: "0"

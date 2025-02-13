@@ -3,7 +3,7 @@ name: Open RFCs
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 14 * * MON,WED,FRI'
+    - cron: "0 14 * * MON,WED,FRI"
 
 jobs:
   open-rfcs:
@@ -11,10 +11,12 @@ jobs:
     timeout-minutes: 10
 
     steps:
+      - uses: actions/checkout@v4
+
       - name: Setup Node.JS
         uses: actions/setup-node@v2
         with:
-          node-version: '12'
+          node-version: "12"
 
       - name: Install Dependencies
         run: npm install --global @artsy/cli@0.26.1
