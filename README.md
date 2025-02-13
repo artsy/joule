@@ -38,4 +38,4 @@ Start ngrok (development proxy)
 When adding a new workflow, add a new yml file under `.github/workflows/` containing your workflow definition.
 
 GitHub disables workflows within a repository if there is no activity in the repository for 60 days.
-To avoid this happening to your workflow, place it within `wokrflow_files` in the `keepalive` workflow.
+To avoid this happening to your workflow, place it within `workflow_files` in the `keepalive` workflow.
