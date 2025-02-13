@@ -3,7 +3,7 @@ name: Next On Call
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 14 * * MON,THU'
+    - cron: "0 14 * * MON,THU"
 
 jobs:
   next-on-call:
@@ -14,7 +14,7 @@ jobs:
       - name: Setup Node.JS
         uses: actions/setup-node@v2
         with:
-          node-version: '12'
+          node-version: "12"
 
       - name: Install Dependencies
         run: npm install --global @artsy/cli
