@@ -3,7 +3,7 @@ name: Facilitate Incident Review
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 14 * * WED'
+    - cron: "0 14 * * WED"
 
 jobs:
   facilitate-incident-review:
@@ -11,10 +11,12 @@ jobs:
     timeout-minutes: 10
 
     steps:
+      - uses: actions/checkout@v3
+
       - name: Setup Node.JS
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: "18"
 
       - name: Install Dependencies
         run: npm install --global @artsy/cli
