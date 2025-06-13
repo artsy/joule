@@ -6,11 +6,13 @@ require('dotenv').config()
 const ACTION_MARK_SOLVED = "solved";
 const ACTION_REPORT_BUG = "report_bug";
 const SOLVED_EMOJI = "white_check_mark";
+const INCIDENT_SEVERITY = "P1 - Critical";
+const INCIDENT_CHANNEL = "C9RK0BLEP"; // #incidents
 const CHANNELS_TO_EXCLUDE = [
   // 'C012K7XU4LE', // #bot-testing
 ];
 const CHANNELS_FOR_BUGS_WORKFLOW_REMINDER = [
-  "C02E1D1G3B3", // #chr-test 
+  "C02E1D1G3B3", // #chr-test
   "C03N12SR0RK", // #product-questions
   "C07PRTJSD6G", // #product-bugs
 ];
@@ -179,6 +181,30 @@ async function processTopMessagesForBugWorkflowReminder(client, event) {
   }
 }
 
+function generateSlackMessageLink(channel, timestamp) {
+  const baseTs = timestamp.replace('.', '');
+  return `https://artsy.slack.com/archives/${channel}/p${baseTs}`;
+}
+
+async function processIncidentMessages(client, event) {
+  try {
+    if (!event?.channel || !event?.text) return;
+    if (!CHANNELS_FOR_BUGS_WORKFLOW_REMINDER.includes(event.channel)) return;
+    if (!event.text.includes(INCIDENT_SEVERITY)) return;
+
+    const timestampToLink = event.thread_ts || event.ts;
+    const messageLink = generateSlackMessageLink(event.channel, timestampToLink);
+
+    await client.chat.postMessage({
+      channel: INCIDENT_CHANNEL,
+      text: `🚨 New incident reported in #product-bugs <${messageLink}|here>.`,
+      unfurl_media: false
+    });
+  } catch (error) {
+    console.error("Error processing incident message:", error);
+  }
+}
+
 app.message(onlyDirectMessages, /^cli (?<args>\S.*)$/, processCLICommand)
 app.message(directMention(), /^<@U\S+> cli (?<args>\S.*)$/, processCLICommand)
 
@@ -196,6 +222,8 @@ app.message(async ({ client, message, event }) => {
   } else {
     await processThreadMessagesForGratitude(client, event);
   }
+
+  await processIncidentMessages(client, event);
 });
 
 app.action(ACTION_MARK_SOLVED, async ({ action, ack, respond, client, body }) => {
