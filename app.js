@@ -197,7 +197,7 @@ async function processIncidentMessages(client, event) {
 
     await client.chat.postMessage({
       channel: INCIDENT_CHANNEL,
-      text: `🚨 New incident reported in #product-bugs <${messageLink}|here>.`,
+      text: `🚨 Potential incident reported <${messageLink}|here>.`,
       unfurl_media: false
     });
   } catch (error) {
