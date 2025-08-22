@@ -210,10 +210,6 @@ async function processEmeraldP2Messages(client, event) {
   try {
     if (!event?.channel || !event?.text) return;
     if (!CHANNELS_FOR_BUGS_WORKFLOW_REMINDER.includes(event.channel)) return;
-
-
-    //TODO need to check parent link for severity or thread.
-    //TODO need to check the latest message in the thread for the team #product-emerald
     if (!event.text.includes(ORDER_MANAGEMENT_AREA)) return;
 
     const timestampToLink = event.thread_ts || event.ts;
