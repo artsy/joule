@@ -206,6 +206,7 @@ async function processIncidentMessages(client, event) {
     console.error("Error processing incident message:", error);
   }
 }
+
 async function processEmeraldP2Messages(client, event) {
   try {
     if (!event?.channel || !event?.text) return;
@@ -245,6 +246,7 @@ app.message(async ({ client, message, event }) => {
 
   await processIncidentMessages(client, event);
   await processEmeraldP2Messages(client, event);
+
 });
 
 app.action(ACTION_MARK_SOLVED, async ({ action, ack, respond, client, body }) => {
