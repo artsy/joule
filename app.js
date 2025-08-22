@@ -7,7 +7,9 @@ const ACTION_MARK_SOLVED = "solved";
 const ACTION_REPORT_BUG = "report_bug";
 const SOLVED_EMOJI = "white_check_mark";
 const INCIDENT_SEVERITY = "P1 - Critical";
+const ORDER_MANAGEMENT_AREA = "Order Management";
 const INCIDENT_CHANNEL = "C9RK0BLEP"; // #incidents
+const EMERALD_CHANNEL = "C02JHHHKP5K";
 const CHANNELS_TO_EXCLUDE = [
   // 'C012K7XU4LE', // #bot-testing
 ];
@@ -205,6 +207,25 @@ async function processIncidentMessages(client, event) {
   }
 }
 
+async function processEmeraldP2Messages(client, event) {
+  try {
+    if (!event?.channel || !event?.text) return;
+    if (!CHANNELS_FOR_BUGS_WORKFLOW_REMINDER.includes(event.channel)) return;
+    if (!event.text.includes(ORDER_MANAGEMENT_AREA)) return;
+
+    const timestampToLink = event.thread_ts || event.ts;
+    const messageLink = generateSlackMessageLink(event.channel, timestampToLink);
+
+    await client.chat.postMessage({
+      channel: EMERALD_CHANNEL,
+      text: `💸 Potential Order Support request <${messageLink}|here>.`,
+      unfurl_media: false
+    });
+  } catch (error) {
+    console.error("Error processing order support message:", error);
+  }
+}
+
 app.message(onlyDirectMessages, /^cli (?<args>\S.*)$/, processCLICommand)
 app.message(directMention(), /^<@U\S+> cli (?<args>\S.*)$/, processCLICommand)
 
@@ -224,6 +245,8 @@ app.message(async ({ client, message, event }) => {
   }
 
   await processIncidentMessages(client, event);
+  await processEmeraldP2Messages(client, event);
+
 });
 
 app.action(ACTION_MARK_SOLVED, async ({ action, ack, respond, client, body }) => {
