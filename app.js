@@ -222,7 +222,7 @@ async function processEmeraldP2Messages(client, event) {
       unfurl_media: false
     });
   } catch (error) {
-    console.error("Error processing incident message:", error);
+    console.error("Error processing order support message:", error);
   }
 }
 
