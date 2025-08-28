@@ -9,6 +9,9 @@
     "test": "echo \"Warning: no test specified\" && exit 0"
   },
   "license": "MIT",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "dependencies": {
     "@artsy/cli": "^1.7.0",
     "@slack/bolt": "^3.12.1",
