@@ -14,14 +14,17 @@ jobs:
       - name: Setup Node.JS
         uses: actions/setup-node@v2
         with:
-          node-version: "12"
+          node-version: "22"
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
       - name: Install Dependencies
-        run: npm install --global @artsy/cli
+        run: yarn install
 
       - name: Run CLI
         id: cli
-        run: echo "PAYLOAD=$(artsy scheduled:next-on-call)" >> "$GITHUB_OUTPUT"
+        run: echo "PAYLOAD=$(/home/runner/work/joule/joule/node_modules/.bin/artsy scheduled:next-on-call)" >> "$GITHUB_OUTPUT"
         env:
           OPSGENIE_API_KEY: ${{ secrets.OPSGENIE_API_KEY }}
           SLACK_WEB_API_TOKEN: ${{ secrets.SLACK_WEB_API_TOKEN }}
