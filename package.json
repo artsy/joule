@@ -13,7 +13,7 @@
     "node": ">=22.0.0"
   },
   "dependencies": {
-    "@artsy/cli": "^1.7.0",
+    "@artsy/cli": "^1.12.1",
     "@slack/bolt": "^3.12.1",
     "dotenv": "^10.0.0",
     "shell-quote": "^1.8.0"
