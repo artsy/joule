@@ -14,14 +14,17 @@ jobs:
       - name: Setup Node.JS
         uses: actions/setup-node@v2
         with:
-          node-version: "12"
+          node-version: "22"
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
       - name: Install Dependencies
-        run: npm install --global @artsy/cli@0.26.1
+        run: yarn install
 
       - name: Run CLI
         id: cli
-        run: echo "PAYLOAD=$(artsy scheduled:rfcs)" >> "$GITHUB_OUTPUT"
+        run: echo "PAYLOAD=$(/home/runner/work/joule/joule/node_modules/.bin/artsy scheduled:rfcs)" >> "$GITHUB_OUTPUT"
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
