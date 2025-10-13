@@ -2,8 +2,6 @@ name: Recently Published
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 14 * * MON"
 
 jobs:
   recently-published:
