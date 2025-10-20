@@ -10,12 +10,14 @@
   },
   "license": "MIT",
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=22.0.0",
+    "yarn": "4.9.4"
   },
   "dependencies": {
     "@artsy/cli": "^1.12.1",
     "@slack/bolt": "^3.12.1",
     "dotenv": "^10.0.0",
     "shell-quote": "^1.8.0"
-  }
+  },
+  "packageManager": "yarn@4.9.4"
 }
