@@ -8,11 +8,14 @@ RUN apk --no-cache --quiet add \
   dumb-init && \
   adduser -D -g '' deploy
 
+# Enable Corepack for Yarn v4
+RUN corepack enable
+
 # Copy files required for installation of application dependencies
 COPY package.json yarn.lock ./
 
 # Install application dependencies
-RUN yarn install --frozen-lockfile && yarn cache clean
+RUN yarn install --immutable
 
 # Copy application code
 COPY . ./
