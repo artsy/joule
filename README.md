@@ -27,6 +27,17 @@ Start bolt server
 Start ngrok (development proxy)
 `yarn ngrok`
 
+## How to test my changes
+
+In order to test your changes, you can visit [Github Actions](https://github.com/artsy/joule/actions) tab, then select a workflow, and choose a branch to test it on it.
+
+<details>
+<summary>Demo</summary>
+
+![how_to_test](docs/images/how_to_test.gif)
+
+</details>
+
 ## Resources
 
 - [Developing Slack apps locally](https://slack.dev/node-slack-sdk/tutorials/local-development)
