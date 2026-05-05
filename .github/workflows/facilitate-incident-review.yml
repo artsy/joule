@@ -3,7 +3,7 @@ name: Facilitate Incident Review
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 14 * * MON"
+    - cron: "0 14 * * TUE"
 
 jobs:
   facilitate-incident-review:
