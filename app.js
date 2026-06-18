@@ -32,6 +32,14 @@ const app = new App({
   receiver
 })
 
+// Global listener error handler. Bolt auto-acks events before listeners run,
+// so an unhandled error in a listener otherwise bubbles to the receiver, which
+// tries to respond on an already-sent response and throws ERR_HTTP_HEADERS_SENT,
+// crashing the process. Swallowing it here keeps the bot alive.
+app.error(async (error) => {
+  console.error("Unhandled Bolt listener error:", error)
+})
+
 async function onlyDirectMessages({ event, next }) {
   if (event.channel_type === "im") {
     await next()
@@ -98,6 +106,10 @@ async function hasCheckmarkReaction({ client, channel, timestamp }) {
 }
 
 async function processThreadMessagesForGratitude(client, event) {
+  // Bot/app/system messages can arrive without `user` or `text`; skip them so
+  // we don't read `text` off undefined or call postEphemeral with no `user`.
+  if (!event.user || !event.text) return;
+
   if (await hasCheckmarkReaction({ client, channel: event.channel, timestamp: event.thread_ts })) return;
 
   const text = event.text.toLowerCase();
@@ -106,35 +118,39 @@ async function processThreadMessagesForGratitude(client, event) {
   } else if (/thank|^ty|solved/.test(text)) {
     const reminderMessage = "Mark this thread as solved by clicking the button or replying `solved`.";
 
-    await client.chat.postEphemeral({
-      channel: event.channel,
-      user: event.user,
-      text: reminderMessage,
-      thread_ts: event.thread_ts,
-      blocks: [
-        {
-          type: "section",
-          text: {
-            type: "mrkdwn",
-            text: reminderMessage,
-          },
-        },
-        {
-          type: "actions",
-          elements: [
-            {
-              type: "button",
-              text: {
-                type: "plain_text",
-                text: "✅  Mark as Solved",
-              },
-              style: "primary",
-              action_id: ACTION_MARK_SOLVED,
+    try {
+      await client.chat.postEphemeral({
+        channel: event.channel,
+        user: event.user,
+        text: reminderMessage,
+        thread_ts: event.thread_ts,
+        blocks: [
+          {
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: reminderMessage,
             },
-          ],
-        },
-      ],
-    });
+          },
+          {
+            type: "actions",
+            elements: [
+              {
+                type: "button",
+                text: {
+                  type: "plain_text",
+                  text: "✅  Mark as Solved",
+                },
+                style: "primary",
+                action_id: ACTION_MARK_SOLVED,
+              },
+            ],
+          },
+        ],
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 }
 
@@ -290,6 +306,15 @@ if (process.env.DEBUG) {
     args.next()
   });
 }
+
+// Last-resort backstops: a single bad event should never crash the bot.
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled promise rejection:', reason)
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught exception:', error)
+});
 
 (async () => {
   await app.start(process.env.PORT || 3000)
