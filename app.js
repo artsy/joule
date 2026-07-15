@@ -18,6 +18,7 @@ const CHANNELS_FOR_BUGS_WORKFLOW_REMINDER = [
   "C03N12SR0RK", // #product-questions
   "C07PRTJSD6G", // #product-bugs
 ];
+const HOTJAR_RECORDING_CHANNEL = "C0BGS6HHV63"; // #amber-hotjar
 
 const receiver = new ExpressReceiver({
   signingSecret: process.env.SLACK_SIGNING_SECRET,
@@ -226,6 +227,34 @@ async function processEmeraldP2Messages(client, event) {
   }
 }
 
+function extractWatchRecordingUrl(event) {
+  const buttons = event.blocks?.flatMap((block) => {
+    if (block.type === "actions") return block.elements || [];
+    if (block.accessory?.type === "button") return [block.accessory];
+    return [];
+  });
+  const button = buttons?.find((el) => el.text?.text?.includes("Watch Recording"));
+  return button?.url;
+}
+
+async function processHotjarRecordingMessages(client, event) {
+  try {
+    if (event.channel !== HOTJAR_RECORDING_CHANNEL) return;
+    if (!event.text?.trim().startsWith("New recording available")) return;
+
+    const url = extractWatchRecordingUrl(event);
+    if (!url) return;
+
+    await client.chat.postMessage({
+      channel: event.channel,
+      thread_ts: event.ts,
+      text: `URL: ${url}`,
+    });
+  } catch (error) {
+    console.error("[hotjar] Error processing Hotjar recording message:", error);
+  }
+}
+
 app.message(onlyDirectMessages, /^cli (?<args>\S.*)$/, processCLICommand)
 app.message(directMention(), /^<@U\S+> cli (?<args>\S.*)$/, processCLICommand)
 
@@ -246,6 +275,7 @@ app.message(async ({ client, message, event }) => {
 
   await processIncidentMessages(client, event);
   await processEmeraldP2Messages(client, event);
+  await processHotjarRecordingMessages(client, event);
 
 });
 
