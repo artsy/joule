@@ -259,7 +259,7 @@ async function processHotjarRecordingMessages(client, event) {
 async function processMazeResponseMessages(client, event) {
   try {
     if (event.channel !== MAZE_RESPONSE_CHANNEL) return;
-    if (!event.text?.includes("You have a new response:")) return;
+    if (!event.text?.includes("new response")) return;
 
     const url = extractButtonUrl(event, "View results dashboard");
     if (!url) return;
