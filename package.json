@@ -6,7 +6,7 @@
   "scripts": {
     "ngrok": "ngrok http 3000",
     "start": "node app.js",
-    "test": "echo \"Warning: no test specified\" && exit 0"
+    "test": "jest"
   },
   "license": "MIT",
   "engines": {
@@ -17,5 +17,8 @@
     "@slack/bolt": "^3.12.1",
     "dotenv": "^10.0.0",
     "shell-quote": "^1.8.0"
+  },
+  "devDependencies": {
+    "jest": "^30.4.2"
   }
 }
