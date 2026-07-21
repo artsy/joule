@@ -3,7 +3,7 @@ name: Standup Reminder
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 14 * * MON"
+    - cron: "43 13 * * MON"
 
 jobs:
   standup-reminder:
