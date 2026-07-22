@@ -2,14 +2,47 @@ name: Next On Call
 
 on:
   workflow_dispatch:
+    inputs:
+      # Only the two production target combinations are selectable here. To
+      # test an arbitrary weekday/hour, run scripts/on-call/next-on-call.ts
+      # locally with NEXT_ON_CALL_TARGET_WEEKDAY/HOUR set directly instead.
+      mode:
+        description: "Which run to simulate"
+        required: true
+        type: choice
+        options:
+          - monday-safety-cutoff
+          - thursday-rotation-boundary
+        default: thursday-rotation-boundary
   schedule:
-    - cron: "0 14 * * MON,THU"
+    - cron: "0 14 * * MON"
+    - cron: "0 14 * * THU"
 
 jobs:
-  next-on-call:
+  # Runs right after the rot-na/sa handoff (Monday). Targets a generous
+  # cutoff (Friday, midnight ET) rather than the next real boundary
+  # (Wednesday's rot-eu/uk handoff), so coverage still extends past the
+  # Thursday run below even if that run ends up firing late.
+  monday-safety-cutoff:
+    if: github.event.schedule == '0 14 * * MON' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'monday-safety-cutoff')
     uses: artsy/duchamp/.github/workflows/incident-next-on-call.yml@main
     with:
       schedule-id: ${{ vars.INCIDENT_IO_SCHEDULE_ID }}
+      target-weekday: 5 # Friday
+      target-hour: 0 # midnight ET
+    secrets:
+      incident-io-api-key: ${{ secrets.INCIDENT_IO_API_KEY }}
+      slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  # Runs a few days before the rot-na/sa handoff (Thursday). Targets that
+  # real boundary (Monday, 11am ET) directly.
+  thursday-rotation-boundary:
+    if: github.event.schedule == '0 14 * * THU' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'thursday-rotation-boundary')
+    uses: artsy/duchamp/.github/workflows/incident-next-on-call.yml@main
+    with:
+      schedule-id: ${{ vars.INCIDENT_IO_SCHEDULE_ID }}
+      target-weekday: 1 # Monday
+      target-hour: 11 # 11am ET
     secrets:
       incident-io-api-key: ${{ secrets.INCIDENT_IO_API_KEY }}
       slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
