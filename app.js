@@ -1,25 +1,11 @@
 const { App, ExpressReceiver, directMention } = require('@slack/bolt')
-const { parse } = require('shell-quote')
-const { execFile } = require('child_process')
 require('dotenv').config()
 
-const ACTION_MARK_SOLVED = "solved";
-const ACTION_REPORT_BUG = "report_bug";
-const SOLVED_EMOJI = "white_check_mark";
-const INCIDENT_SEVERITY = "P1 - Critical";
-const ORDER_MANAGEMENT_AREA = "Order Management";
-const INCIDENT_CHANNEL = "C9RK0BLEP"; // #incidents
-const EMERALD_CHANNEL = "C02JHHHKP5K";
-const CHANNELS_TO_EXCLUDE = [
-  // 'C012K7XU4LE', // #bot-testing
-];
-const CHANNELS_FOR_BUGS_WORKFLOW_REMINDER = [
-  "C02E1D1G3B3", // #chr-test
-  "C03N12SR0RK", // #product-questions
-  "C07PRTJSD6G", // #product-bugs
-];
-const HOTJAR_RECORDING_CHANNEL = "C0BGS6HHV63"; // #amber-hotjar
-const MAZE_RESPONSE_CHANNEL = "C0BHC6GEXC7"; // #amber-maze
+const { ACTION_MARK_SOLVED, ACTION_REPORT_BUG } = require('./lib/config')
+const { onlyDirectMessages, debugDumpMiddleware } = require('./lib/middleware')
+const { processCLICommand, processGreeting, processRFCsCommand } = require('./lib/commands')
+const { dispatchMessageProcessors } = require('./lib/message-processors')
+const { handleMarkSolved, handleReportBug } = require('./lib/actions')
 
 const receiver = new ExpressReceiver({
   signingSecret: process.env.SLACK_SIGNING_SECRET,
@@ -34,246 +20,6 @@ const app = new App({
   receiver
 })
 
-async function onlyDirectMessages({ event, next }) {
-  if (event.channel_type === "im") {
-    await next()
-  }
-}
-
-async function runCLI(args, callback) {
-  const parsedArgs = parse(args)
-  const commandArgs = ["run", "--silent", "artsy"].concat(parsedArgs)
-
-  return execFile("yarn", commandArgs, callback)
-}
-
-async function processCLICommand({ message, context, say }) {
-  const args = context.matches.groups.args
-
-  runCLI(args, async (error, stdout) => {
-    let result
-
-    if (error) {
-      result = error.toString()
-    } else {
-      result = stdout
-    }
-
-    await say({ text: "```\n" + result.trim() + "\n```", thread_ts: message.thread_ts })
-  })
-}
-
-async function processGreeting({ context, message, say }) {
-  const greeting = context.matches.groups.greeting
-
-  await say({ text: `${greeting}, how are you?`, thread_ts: message.thread_ts })
-}
-
-async function processRFCsCommand({ message, say }) {
-  runCLI("scheduled:rfcs", async (error, stdout) => {
-    if (error) {
-      await say({ text: "```\n" + error.toString() + "\n```", thread_ts: message.thread_ts })
-    } else {
-      json = JSON.parse(stdout)
-      json.thread_ts = message.thread_ts
-      await say(json)
-    }
-  })
-}
-
-async function addCheckmarkReaction({ client, channel, timestamp }) {
-  try {
-    await client.reactions.add({ name: SOLVED_EMOJI, channel, timestamp });
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-async function hasCheckmarkReaction({ client, channel, timestamp }) {
-  try {
-    const response = await client.reactions.get({ channel, timestamp });
-    return response.message.reactions?.some((reaction) => reaction.name === SOLVED_EMOJI) || false;
-  } catch (error) {
-    console.error(error);
-    return false;
-  }
-}
-
-async function processThreadMessagesForGratitude(client, event) {
-  if (await hasCheckmarkReaction({ client, channel: event.channel, timestamp: event.thread_ts })) return;
-
-  const text = event.text.toLowerCase();
-  if (text === "solved" || text.endsWith(" has been updated to `done`.") || text.endsWith(" has been updated to `closed`.")) {
-    await addCheckmarkReaction({ client, channel: event.channel, timestamp: event.thread_ts });
-  } else if (/thank|^ty|solved/.test(text)) {
-    const reminderMessage = "Mark this thread as solved by clicking the button or replying `solved`.";
-
-    await client.chat.postEphemeral({
-      channel: event.channel,
-      user: event.user,
-      text: reminderMessage,
-      thread_ts: event.thread_ts,
-      blocks: [
-        {
-          type: "section",
-          text: {
-            type: "mrkdwn",
-            text: reminderMessage,
-          },
-        },
-        {
-          type: "actions",
-          elements: [
-            {
-              type: "button",
-              text: {
-                type: "plain_text",
-                text: "✅  Mark as Solved",
-              },
-              style: "primary",
-              action_id: ACTION_MARK_SOLVED,
-            },
-          ],
-        },
-      ],
-    });
-  }
-}
-
-async function processTopMessagesForBugWorkflowReminder(client, event) {
-  if (!CHANNELS_FOR_BUGS_WORKFLOW_REMINDER.includes(event.channel)) return;
-
-  const issueWordsRegex = /(bug|issue|error|reproduce|complain|replicate|wrong)/i;
-  const ignoreWordsRegex = /feedback/i;
-  const reminderMessage = `Oops! 🐞\nIt seems you found a bug, <@${event.user}>. Please use the 'Report a Bug' workflow. Thanks! 🙌`;
-
-  if (issueWordsRegex.test(event.text) && !ignoreWordsRegex.test(event.text)) {
-    try {
-      await client.chat.postEphemeral({
-        channel: event.channel,
-        user: event.user,
-        text: reminderMessage,
-        thread_ts: event.thread_ts,
-        blocks: [
-          {
-            type: "section",
-            text: {
-              type: "mrkdwn",
-              text: reminderMessage,
-            },
-          },
-          {
-            type: "actions",
-            elements: [
-              {
-                type: "button",
-                text: {
-                  type: "plain_text",
-                  text: "▶️  Report Bug",
-                },
-                style: "primary",
-                url: "https://slack.com/shortcuts/Ft074LRBHCE6/8e9a1ef94c02a74bbb6e2aee43b22d87",
-                action_id: ACTION_REPORT_BUG
-              },
-            ],
-          },
-        ],
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  }
-}
-
-function generateSlackMessageLink(channel, timestamp) {
-  const baseTs = timestamp.replace('.', '');
-  return `https://artsy.slack.com/archives/${channel}/p${baseTs}`;
-}
-
-async function processIncidentMessages(client, event) {
-  try {
-    if (!event?.channel || !event?.text) return;
-    if (!CHANNELS_FOR_BUGS_WORKFLOW_REMINDER.includes(event.channel)) return;
-    if (!event.text.includes(INCIDENT_SEVERITY)) return;
-
-    const timestampToLink = event.thread_ts || event.ts;
-    const messageLink = generateSlackMessageLink(event.channel, timestampToLink);
-
-    await client.chat.postMessage({
-      channel: INCIDENT_CHANNEL,
-      text: `🚨 Potential incident reported <${messageLink}|here>.`,
-      unfurl_media: false
-    });
-  } catch (error) {
-    console.error("Error processing incident message:", error);
-  }
-}
-
-async function processEmeraldP2Messages(client, event) {
-  try {
-    if (!event?.channel || !event?.text) return;
-    if (!CHANNELS_FOR_BUGS_WORKFLOW_REMINDER.includes(event.channel)) return;
-    if (!event.text.includes(ORDER_MANAGEMENT_AREA)) return;
-
-    const timestampToLink = event.thread_ts || event.ts;
-    const messageLink = generateSlackMessageLink(event.channel, timestampToLink);
-
-    await client.chat.postMessage({
-      channel: EMERALD_CHANNEL,
-      text: `💸 Potential Order Support request <${messageLink}|here>.`,
-      unfurl_media: false
-    });
-  } catch (error) {
-    console.error("Error processing order support message:", error);
-  }
-}
-
-function extractButtonUrl(event, label) {
-  const buttons = event.blocks?.flatMap((block) => {
-    if (block.type === "actions") return block.elements || [];
-    if (block.accessory?.type === "button") return [block.accessory];
-    return [];
-  });
-  const button = buttons?.find((el) => el.text?.text?.includes(label));
-  return button?.url;
-}
-
-async function processHotjarRecordingMessages(client, event) {
-  try {
-    if (event.channel !== HOTJAR_RECORDING_CHANNEL) return;
-    if (!event.text?.trim().startsWith("New recording available")) return;
-
-    const url = extractButtonUrl(event, "Watch Recording");
-    if (!url) return;
-
-    await client.chat.postMessage({
-      channel: event.channel,
-      thread_ts: event.ts,
-      text: `URL: ${url}`,
-    });
-  } catch (error) {
-    console.error("[hotjar] Error processing Hotjar recording message:", error);
-  }
-}
-
-async function processMazeResponseMessages(client, event) {
-  try {
-    if (event.channel !== MAZE_RESPONSE_CHANNEL) return;
-    if (!event.text?.includes("new response")) return;
-
-    const url = extractButtonUrl(event, "View results dashboard");
-    if (!url) return;
-
-    await client.chat.postMessage({
-      channel: event.channel,
-      thread_ts: event.ts,
-      text: `URL: ${url}`,
-    });
-  } catch (error) {
-    console.error("[maze] Error processing Maze response message:", error);
-  }
-}
-
 app.message(onlyDirectMessages, /^cli (?<args>\S.*)$/, processCLICommand)
 app.message(directMention(), /^<@U\S+> cli (?<args>\S.*)$/, processCLICommand)
 
@@ -284,65 +30,20 @@ app.message(onlyDirectMessages, /^rfcs$/i, processRFCsCommand)
 app.message(directMention(), /^<@U\S+> rfcs$/i, processRFCsCommand)
 
 app.message(async ({ client, message, event }) => {
-  if (CHANNELS_TO_EXCLUDE.includes(event.channel)) return;
-
-  if (message.thread_ts == null) {
-    await processTopMessagesForBugWorkflowReminder(client, event);
-  } else {
-    await processThreadMessagesForGratitude(client, event);
-  }
-
-  await processIncidentMessages(client, event);
-  await processEmeraldP2Messages(client, event);
-  await processHotjarRecordingMessages(client, event);
-  await processMazeResponseMessages(client, event);
-
+  await dispatchMessageProcessors({ client, message, event });
 });
 
-app.action(ACTION_MARK_SOLVED, async ({ action, ack, respond, client, body }) => {
-  await ack();
-  const { channel, container } = action;
-
-  try {
-    const channel = body.container.channel_id;
-    const ts = body.container.thread_ts || body.container.message_ts;
-
-    if (!channel) throw new Error("Channel is undefined");
-    if (!ts) throw new Error("Timestamp is undefined");
-
-    await addCheckmarkReaction({ client, channel: body.channel.id, timestamp: ts });
-    await respond({ delete_original: true });
-
-  } catch (error) {
-    console.error("Error adding checkmark reaction:", error);
-  }
-});
-
-app.action(ACTION_REPORT_BUG, async ({ ack }) => {
-  await ack();
-  // URL action, no action needed. 
-});
+app.action(ACTION_MARK_SOLVED, handleMarkSolved);
+app.action(ACTION_REPORT_BUG, handleReportBug);
 
 if (process.env.DEBUG) {
-  app.use(args => {
-    const copiedArgs = JSON.parse(JSON.stringify(args))
-    copiedArgs.context.botToken = 'xoxb-***'
-    if (copiedArgs.context.userToken) {
-      copiedArgs.context.userToken = 'xoxp-***'
-    }
-    copiedArgs.client = {}
-    copiedArgs.logger = {}
-    args.logger.info(
-      "Dumping request data for debugging...\n\n" +
-      JSON.stringify(copiedArgs, null, 2) +
-      "\n"
-    )
-    args.next()
-  });
+  app.use(debugDumpMiddleware);
 }
 
-(async () => {
-  await app.start(process.env.PORT || 3000)
+if (require.main === module) {
+  (async () => {
+    await app.start(process.env.PORT || 3000)
 
-  console.log('⚡️ Bolt app is running!')
-})()
+    console.log('⚡️ Bolt app is running!')
+  })()
+}
