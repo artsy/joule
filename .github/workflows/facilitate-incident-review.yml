@@ -2,6 +2,11 @@ name: Facilitate Incident Review
 
 on:
   workflow_dispatch:
+    inputs:
+      meeting-date:
+        description: "Override meeting date (YYYY-MM-DD) — only for a rare off-week catch-up review, leave blank otherwise"
+        required: false
+        type: string
   schedule:
     - cron: "0 14 * * WED"
 
@@ -13,12 +18,8 @@ jobs:
       meeting-weekday: ${{ vars.MEETING_WEEKDAY }}
       meeting-hour: ${{ vars.MEETING_HOUR }}
       meeting-minute: ${{ vars.MEETING_MINUTE }}
-      # The routine Wednesday cron only needs to see 1 day ahead (tomorrow's
-      # regular meeting). An occasional manual catch-up trigger needs enough
-      # slack to reach an off-week `exceptions` date on any weekday (e.g.
-      # triggered the Friday before a Monday catch-up).
-      lookahead-days: ${{ github.event_name == 'schedule' && 1 || 6 }}
-      dates: ${{ vars.DATES }}
+      base-date: ${{ vars.MEETING_BASE_DATE }}
+      override-date: ${{ github.event.inputs.meeting-date }}
     secrets:
       incident-io-api-key: ${{ secrets.INCIDENT_IO_API_KEY }}
       slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
