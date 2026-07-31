@@ -28,6 +28,9 @@ jobs:
         env:
           OPSGENIE_API_KEY: ${{ secrets.OPSGENIE_API_KEY }}
           SLACK_WEB_API_TOKEN: ${{ secrets.SLACK_WEB_API_TOKEN }}
+          ORBIT_URL: ${{ secrets.ORBIT_URL }}
+          ORBIT_TOKEN: ${{ secrets.ORBIT_TOKEN }}
+          ORBIT_SECURITY_BOUNTY_ROTATION_ID: ${{ secrets.ORBIT_SECURITY_BOUNTY_ROTATION_ID }}
 
       - name: Standup Reminder > Slack
         uses: 8398a7/action-slack@v3
