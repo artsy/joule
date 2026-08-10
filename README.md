@@ -33,6 +33,21 @@ Start ngrok (development proxy)
 
 > Note: To develop locally, request to be added as a collaborator.
 
+## Migrating from Yarn 1 to Yarn 4
+
+This repo moved from Yarn 1 (Classic) to Yarn 4 (Berry). The pinned version lives in `package.json`'s `packageManager` field and in `.yarnrc.yml`'s `yarnPath`, and the matching binary is vendored at `.yarn/releases/`.
+
+If your local `yarn` is still Yarn 1, do this once:
+
+```sh
+corepack enable
+yarn install
+```
+
+`corepack enable` makes the global `yarn` command read `packageManager` and hand off to the pinned version, so you don't need to install Yarn 4 yourself. `./scripts/setup.sh` already does this for you.
+
+If `yarn --version` still shows `1.x` after that, corepack itself may be disabled system-wide (common on newer Node versions) — run `npm install --global corepack` first, then repeat the steps above.
+
 ## Adding a new workflow
 
 When adding a new workflow, add a new yml file under `.github/workflows/` containing your workflow definition.
