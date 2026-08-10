@@ -9,10 +9,11 @@ RUN apk --no-cache --quiet add \
   adduser -D -g '' deploy
 
 # Copy files required for installation of application dependencies
-COPY package.json yarn.lock ./
+COPY package.json yarn.lock .yarnrc.yml ./
+COPY .yarn/releases ./.yarn/releases
 
 # Install application dependencies
-RUN yarn install --frozen-lockfile && yarn cache clean
+RUN corepack enable && yarn install --frozen-lockfile && yarn cache clean
 
 # Copy application code
 COPY . ./

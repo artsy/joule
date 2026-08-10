@@ -17,7 +17,8 @@ if [[ ! -z $NVM_DIR ]]; then # skip if nvm is not available
 fi
 
 echo "Installing dependencies..."
-yarn install || (npm install --global yarn@latest && yarn install)
+corepack enable
+yarn install
 
 echo 'Updating .env file (for shared configuration)...'
 aws s3 cp s3://artsy-citadel/joule/.env ./ || 'Unable to download shared configuration, ensure you have S3 access!'
