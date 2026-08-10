@@ -5,9 +5,9 @@ __metadata:
   version: 10
   cacheKey: 10c0
 
-"@artsy/cli@npm:^1.12.1":
-  version: 1.18.0
-  resolution: "@artsy/cli@npm:1.18.0"
+"@artsy/cli@npm:^1.20.0":
+  version: 1.20.0
+  resolution: "@artsy/cli@npm:1.20.0"
   dependencies:
     "@oclif/command": "npm:^1"
     "@oclif/config": "npm:^1"
@@ -39,7 +39,7 @@ __metadata:
     uri-scheme: "npm:^1.0.76"
   bin:
     artsy: bin/run
-  checksum: 10c0/3b8257725617c28006b514060d99191230f68a11b513c44753d4dc93283b178c10b7eefbbca7ad1254d30bbb08fc52969a78d3defabeee6dd7d3f7614a704963
+  checksum: 10c0/8460a0b233cd158e0cd7f1976082b5f9c3713c9e8785d87e749ba617c42305b8a56bc1de981fe4177757d8a67ef64de41a6479cfb2f3f20a6b22c8339debe644
   languageName: node
   linkType: hard
 
@@ -4314,7 +4314,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "joule@workspace:."
   dependencies:
-    "@artsy/cli": "npm:^1.12.1"
+    "@artsy/cli": "npm:^1.20.0"
     "@slack/bolt": "npm:^3.12.1"
     dotenv: "npm:^10.0.0"
     jest: "npm:^30.4.2"
